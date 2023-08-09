@@ -21,3 +21,5 @@ I will give myself 1 hour each day to work on any question selected from the lis
 Time spent, over or under, will be noted.
 
 If I cannot complete the problem using the resources available to me, I will mark it as incomplete and revisit it at the end of the 100 Days.
+
+Occasionally, if I feel it makes sense, I'll edit the challege to interact with a challenge already written.
