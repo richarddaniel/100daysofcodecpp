@@ -1,0 +1,57 @@
+/*
+Given a string, write a function to compress it by using the counts of repeated characters. 
+However, if the "compressed" string would not become smaller than the original string, return the original string. 
+You can assume the string has only uppercase and lowercase letters (a-z, A-Z).
+
+Function Signature:
+std::string compressString(const std::string& input);
+
+
+Example:
+
+Input: "aabcccccaaa"Output: "a2b1c5a3"
+
+Input: "abcde"
+Output: "abcde"
+
+Explanation for the first example: The character 'a' appears twice initially, followed by one 'b' and then five 'c's, and finally three 'a's.
+*/
+
+#include <iostream>
+#include <string>
+
+std::string stringCompression(std::string uncompressedString);
+
+int main()
+{
+    std::string input;
+    std::cout << "Enter your string.\n";
+    std::cin >> input;
+    std::cout << stringCompression(input);
+}
+
+std::string stringCompression(std::string uncompressedString) {
+    char comparison{uncompressedString[0]}; // We init this variable as the first char in the string.
+    int charCount{ 0 };                     // This will keep track of the number of times the char appears in a row.
+    std::string compressedString;
+
+    for (char i : uncompressedString) { // For every character in the string,
+        if (comparison == i) {          // check if it's the same as the last.
+            charCount++;                // If it is, ++ the count.
+        }
+        else {                                                          // If it isn't,
+            compressedString += comparison + std::to_string(charCount); // add the char and (converted) count to our return,
+            charCount = 1;                                              // reset the count,
+            comparison = i;                                             // And set the comparison to the new char.
+        }
+    }
+
+    compressedString += comparison + std::to_string(charCount); // Adds the last char and count w/o need for another conditional
+
+    if (compressedString.size() > uncompressedString.size()) { // If the input is shorter than output, returns output.
+        return uncompressedString;
+    }
+    else {
+        return compressedString;
+    }  
+}
