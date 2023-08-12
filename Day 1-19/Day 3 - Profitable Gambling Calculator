@@ -1,0 +1,92 @@
+/*
+Create a function that takes in three arguments: probability, prize, and price. 
+It returns true if the probability * prize > price. Otherwise return false.
+
+Edit: This was pretty easy, so I decided to expand upon it a bit; specifically, allowing the 
+user to enter their chance to win as either odds or a percentage.
+*/
+
+#include <iostream>
+
+bool isProfitable(float probability, float prize, float price); // This is a simple function that does the (probability * prize > price) calculation.
+
+float getProbability(); // This get user input for chance to win, in either odds (1 in 1000) or percentage (0.001%).
+float getPrize(); // Simple function that gets user input for prize.
+float getPrice(); // Simple function that gets user input for price.
+
+int main()
+{
+    float probability{ 0 };
+    float prize{ 0 };
+    float price{ 0 };
+
+    std::cout << "Hello gambler!\n";
+
+    probability = getProbability();
+    prize = getPrize();
+    price = getPrice();
+
+    std::cout << "Is the gamble profitable?: "; 
+    if (isProfitable(probability, prize, price)) {
+        std::cout << "Yeah! Roll the dice!";
+    }
+    else {
+        std::cout << "Nope. You're gettin' scammed, pardner.";
+    }
+}
+
+bool isProfitable(float probability, float prize, float price) {
+    if ((probability * prize) > price) {
+        return true;
+    }
+    return false;
+}
+
+float getProbability() {
+    bool isOdds{ 0 }; // I made this a bool because there's only two choices. Is nice code > user experience? No... and it's awkward to choose between 1 and 0.
+    char inputValidation{};
+
+    std::cout << "Please input your probability of winning.\nAre you entering odds or a percentage?\n";
+    std::cout << "1. Odds\n0. Percentage\n";
+    std::cin >> isOdds;
+    
+    if (isOdds) {
+        int x{ 0 };
+        int y{ 0 };
+        while (true) {
+            std::cout << "Odds are input in the format of X in Y (E.g. 1 in 1000). Enter X, then Y.\n";
+            std::cin >> x >> y;
+            std::cout << "You entered: " << x << " in " << y << " odds. Is this correct? y/n\n";
+            std::cin >> inputValidation;
+            if (inputValidation == 'y') {
+                return x / y;
+            }
+        }
+    }
+    else { //There's a lot repeating here. Wondering about overloading...
+        int x;
+        std::cout << "Percentage is input in the format of X (E.g. X%). Enter X.\n";
+        std::cin >> x;
+        std::cout << "You entered: " << x << "%. Is this correct? y/n\n";
+        std::cin >> inputValidation;
+        if (inputValidation == 'y') {
+            return x / 100;
+        }
+    }
+
+    return 0;
+}
+
+float getPrize() {
+    float prize{ 0 };
+    std::cout << "Great! And what do you stand to win? Enter as a dollar amount. (E.g. 123.45)\n";
+    std::cin >> prize;
+    return prize;
+}
+
+float getPrice() { // Same here. Lots of repetition... 
+    float price{ 0 };
+    std::cout << "And what's the cost? Enter as a dollar amount. (E.g. 123.45)\n";
+    std::cin >> price;
+    return price;
+}
