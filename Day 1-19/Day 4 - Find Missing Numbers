@@ -1,0 +1,70 @@
+/*
+Find the Missing Number
+Create a function that takes an array of numbers between 1 and 10 (excluding one number) and returns the missing number.
+
+Examples
+missingNum([1, 2, 3, 4, 6, 7, 8, 9, 10]) ➞ 5
+
+missingNum([7, 2, 3, 6, 5, 9, 1, 4, 8]) ➞ 10
+
+missingNum([10, 5, 1, 2, 4, 6, 8, 3, 9]) ➞ 7
+Notes
+The array of numbers will be unsorted (not in order).
+Only one number will be missing.
+
+Edit: I'm going to modify the challenge a bit. I'm going to create a function to randomly make the array, with some random
+(but limited) range of number, including a random (also limited) amount of missing numbers.
+
+Then I'm going to solve it in line with the challenge, returning an array of the missing numbers. 
+
+Edit 2: I'm going to make it a vector so that it can be dynamically created. 
+
+Edit 3: Day 4 used to create the randome vector generator, learn about random and seeding.
+*/
+
+#include <iostream>
+#include <vector>
+#include <cstdlib> // Using this, because the C++ 11 random is wild. 
+#include <ctime>  // Using this to seed random (which isn't true random, I know.)
+
+int randomVectorSize();
+void randomVectorPopulator(std::vector<int>&);
+void printVector(const std::vector<int>&);
+
+int main()
+{
+    srand(time(NULL));
+    std::vector<int> randomVector(randomVectorSize());
+    randomVectorPopulator(randomVector);
+    std::cout << "Hello array lover!\nHere's your random array.\n";
+    printVector(randomVector);
+}
+
+int randomVectorSize() {
+    int random = rand() % 1001;
+    return random; 
+}
+
+void randomVectorPopulator(std::vector<int>& randomVector) {
+    std::vector<int> pool(randomVector.size());
+    for (int i = 0; i < randomVector.size(); i++) {
+        pool[i] = i + 1;
+    }
+
+    for (int i{ 0 }; i < randomVector.size(); i++) {
+        if ((rand() % 10) == 0) {
+            randomVector[i] = 0;
+            continue;
+        }
+        int randomIndex = rand() % pool.size();
+        randomVector[i] = pool[randomIndex];
+        pool.erase(pool.begin() + randomIndex);
+    }
+}
+
+void printVector(const std::vector<int>& vector) {
+    for (const int& value : vector) {
+        std::cout << value << " ";
+    }
+    std::cout << std::endl;
+}
