@@ -1,0 +1,103 @@
+/*
+Find the Missing Number
+Create a function that takes an array of numbers between 1 and 10 (excluding one number) and returns the missing number.
+
+Examples
+missingNum([1, 2, 3, 4, 6, 7, 8, 9, 10]) ➞ 5
+
+missingNum([7, 2, 3, 6, 5, 9, 1, 4, 8]) ➞ 10
+
+missingNum([10, 5, 1, 2, 4, 6, 8, 3, 9]) ➞ 7
+Notes
+The array of numbers will be unsorted (not in order).
+Only one number will be missing.
+
+Note: This was thougher than I thought it would be! Learned a lot about vectors, random generation, ways to structure data!
+*/
+
+#include <iostream>
+#include <vector>
+#include <cstdlib> // Using this, because the C++ 11 random is wild. 
+#include <ctime>  // Using this to seed random (which isn't true random, I know.)
+
+int randomVectorSize();
+void randomVectorPopulator(std::vector<int>&, int);
+void printVector(const std::vector<int>&);
+std::vector<int> missingNumbers(const std::vector<int>&);
+
+int main()
+{
+    srand(time(NULL)); // Seeds the random generator. (which isn't true random, I know.)
+    std::vector<int> randomVector(randomVectorSize());
+    randomVectorPopulator(randomVector, 10);
+    std::cout << "Hello array lover!\nHere's your random array:\n";
+    printVector(randomVector);
+    std::cout << "And here are the numbers missing from it:\n";
+    printVector(missingNumbers(randomVector));
+}
+
+int randomVectorSize() {         // Used to randomly size the vector.
+    int random = rand() % 1001;  // Only thing of note here is that we use the modulo opperand to limit the random number,
+    return random;               // which took me a minute to understand how it works.
+}
+
+void randomVectorPopulator(std::vector<int>& randomVector, int emptyChance) { // Used to randomly populate the vector.
+    std::vector<int> pool(randomVector.size());              // Creates and populates a pool the size of randomVector with every possible number.
+
+    for (int i = 0; i < randomVector.size(); i++) {
+        pool.push_back(i+1);
+    }
+
+    for (int i{ 0 }; i < randomVector.size(); i++) {       // Then, for each index in randomVector,
+        if ((rand() % emptyChance) == 0) {                 // if it passes the 1 in X chance,
+            randomVector[i] = 0;
+            continue;
+        }
+        int randomIndex = rand() % pool.size();             // a random number is assigned based on the size of the current pool.
+        randomVector[i] = pool[randomIndex];                // The number at the index is set to the random index in the pool,
+        pool.erase(pool.begin() + randomIndex);             // and the corresponding number is removed from the pool!
+    }
+}
+/*
+This was my initial solution for finding the missing numbers. 
+However, it's slow (O(n^2)) and it also doesn't account for removed numbers.
+
+std::vector<int> missingNumbers(std::vector<int> randomVector) {
+    std::vector<int> pool(randomVector.size());
+    for (int i = 0; i < randomVector.size(); i++) {
+        pool[i] = i + 1;
+    }
+
+    for (int i{ 0 }; i < randomVector.size(); i++) {
+        pool.erase(pool.begin() + randomVector[i]);
+    }
+}
+*/
+
+std::vector<int> missingNumbers(const std::vector<int>& randomVector) { // This is pretty big brained.
+    std::vector<bool> usedNumbers(randomVector.size(), false);          // Create a vector of bools to find used numbers,
+    std::vector<int> missingNumbers;                                    // and a vector to store missing numbers.
+
+    for (int i : randomVector) {                                        // Loop through randomVector, seeting the index of our bool vector
+        if (i != 0) {
+            usedNumbers[i - 1] = true;                                  // to true based on the number in our randomVector.
+        }                                  
+    }
+
+    for (int i{ 0 }; i < usedNumbers.size(); i++) {                     // And then use the index of the bools that are false
+        if (!usedNumbers[i]) {                                          // as our missing numbers!
+            missingNumbers.push_back(i);
+        }
+    }
+
+    return missingNumbers;
+}
+
+void printVector(const std::vector<int>& vector) {
+
+    for (const int& value : vector) {
+        std::cout << value << " ";
+    }
+
+    std::cout << std::endl;
+}
