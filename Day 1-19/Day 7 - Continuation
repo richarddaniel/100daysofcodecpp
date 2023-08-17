@@ -1,0 +1,98 @@
+/*
+Create a function that takes in two sorted vectors of unique numbers and returns an array of numbers which are common to both input vectors.
+Try doing this with O(n+m) time efficiency.
+
+Extra challenge: I want to do this with an unsorted vector.
+
+Notes: Inititial thought is to ceate two pointers to the vectors and loop through both, comparing the pointers.
+If I move them at the same time, it doesn't work for an unsorted list, and if I loop one before I move the other,
+it has exponential time complexity. Hmm...
+
+1. To create a random number, we need a random number engine. mt19937 is a relatively fast engine with good quality.
+2. As in, every value has an equal chance to be chosen. So a distribution of (1, 10) means every value from 1 to 10 has an equal chance to be chosen.
+
+Day 2: Did some looking, and it seems this would be a great case for a hash map. Specifically, an unordered map.
+
+A few things to note: This program is a little silly, as the vector comparisons will just be every number from the smaller vector being found in the larger vector,
+but it's a proof of concept. Also, for some reason, vector size distribution is remarkably small, looking into this now!
+*/
+
+#include <iostream>
+#include <vector>
+#include <random>
+#include <unordered_map>
+
+std::vector<int> randomVector(int);
+void printVector(std::vector<int>);
+std::vector<int> findCommonNumbers(std::vector<int>, std::vector<int>);
+
+int main()
+{
+    int vectorSize1{ 100 };
+    int vectorSize2{ 100 };
+
+    std::vector<int> vector1 = randomVector(vectorSize1);
+    std::vector<int> vector2 = randomVector(vectorSize2);
+
+    printVector(vector1);
+    printVector(vector2);
+
+    std::cout << "Hello vector lover!\n";
+ 
+    std::vector<int> commonNumbers = findCommonNumbers(vector1, vector2);
+    printVector(commonNumbers);
+}
+
+std::vector<int> randomVector(int vectorMaxSize) {
+    std::vector<int> randomVector;
+    std::vector<int> pool;
+
+    std::random_device randomValue;                                     // Generates a random value to use as a seed for our random generation engine.
+    std::cout << "Random value is: " << randomValue() << std::endl;
+    std::mt19937 randomEngine(randomValue());                           // Creates a Mersenne Twister random generation engine^1 seeded with our randomValue.
+    std::uniform_int_distribution<int> vectorSize(1, vectorMaxSize);    // This dictates a range of uniform number generation^2.
+
+    for (int i = 0; i < vectorSize(randomEngine); i++) {                // Populates a pool the size of our random vector.
+            pool.push_back(i + 1);
+    }
+    std::cout << "Random Vector size is: " << pool.size() << std::endl;
+
+    for (int i{ 0 }; i = pool.size(); i++) {                                        // Then, for each index in our pool,
+        std::uniform_int_distribution<int> possibleRandomIndex(0, pool.size()-1);   // a distribution is created based on the current pool size,
+        int randomIndex = possibleRandomIndex(randomEngine);                        // a random number is assigned based on the distribution,
+        randomVector.push_back(pool[randomIndex]);        // The number at the index is set to the random index in the pool,
+        pool.erase(pool.begin() + randomIndex);           // and the corresponding number is removed from the pool.
+    }
+
+    return randomVector;
+}
+
+std::vector<int> findCommonNumbers(std::vector<int> vector1, std::vector<int> vector2) {
+    std::vector<int> commonNumbers;
+
+    std::unordered_map<int, int> comparisonMap; // Create a simple hash map of the int values.
+    for (int i : vector1) {
+        comparisonMap[i] = i;
+    }
+
+    for (int i : vector2) {                     // If the value of i matches an int in our comparison map, add it to our vector of common numbers.
+        if (comparisonMap[i] == false) {
+            continue;
+        }
+        else {
+            commonNumbers.push_back(comparisonMap[i]);
+        }
+    }
+
+    return commonNumbers;
+}
+
+void printVector(std::vector<int> vector) {
+    std::cout << "[ ";
+    for (int i : vector) {
+        std::cout << i << " ";
+    }
+    std::cout << "]\n";
+}
+
+
